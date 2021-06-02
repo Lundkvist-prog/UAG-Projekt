@@ -160,9 +160,18 @@ function getThreads(){
 
             $tidthread = $row['tid'];
             $catid= $row['category'];
+            $userid = $row['uid'];
             
             echo"<div class='thread-box2' id='$catid'> ";
             echo "<div class='thread-box'>";
+            if(isset($_SESSION['uid'])){
+                if($userid == $_SESSION['uid'] || $_SESSION['admin'] == true){
+                    echo "<form class='delete-form' method='POST' action='".deletethread($db)."'>
+                    <input type='hidden' name='tid' value='".$tidthread."'>
+                    <button type='submit' class='btn6' name='delethread'>Delete</button>
+                 </form>";
+                 }
+            }  
             echo "<form id='GoToThreadForm' class='form' method='POST' action='".GoToNextPage($tidthread)."'>";            
             echo "<p class='thic'>".$row['topic']."</p>";
             echo "<p class='postedThreadUsername' id='metabrowse'>Created by: ".getUsername($row['uid'])."</p>";
@@ -186,12 +195,26 @@ function getThreads(){
             </div> <br>";
             echo "<button type ='submit' name='threadSubmit' value='$tidthread' class='btn7'>Explore Activity</button>";
             echo "</p></form></div> </div>";
+    } 
+} 
 
-
-    }   
-}  
-
-
+function deletethread($db){ //suppose to delete comments but instead kills database...oops
+    if(isset($_POST['delethread'])){
+       $threadid = $_POST['tid'];
+       $deletrate = "DELETE FROM ratings WHERE tid=:tid";
+       $delrat = $db->prepare($deletrate);
+       $delrat->bindParam(':tid', $threadid,SQLITE3_TEXT);
+       $delrat->execute();
+       $deletethread = "DELETE FROM threads WHERE tid=:tid";
+       $delstmt = $db->prepare($deletethread);
+       $delstmt->bindParam(':tid', $threadid,SQLITE3_TEXT);
+       if($delstmt->execute()){
+       }
+       else{
+       }
+       header("location:./home.php");
+   } 
+}
 function GoToNextPage($tidthread){ //changed this from url post to a session variable
     if(isset($_POST['threadSubmit'])){
         $_SESSION['tid'] = $_POST['threadSubmit'];
@@ -328,13 +351,15 @@ function getcomments($tid){ //Show comments/ratings on the particular thread
               echo"<div class= 'thecomment'>";
               echo nl2br($row['comment'] . '<br><br>');
                echo "</div>";
-               
-              if(isset($_SESSION['uid']) && $userid == $_SESSION['uid']){
-                echo "<form class='delete-form' method='POST' action='".deletecom($db)."'>
-                <input type='hidden' name='cid' value='".$usercid."'>
-                <button type='submit' class='btn6' name='deletcom'>Delete</button>
-             </form>";
-             }
+               if(isset($_SESSION['uid'])){
+                if($userid == $_SESSION['uid'] || $_SESSION['admin'] == true){
+                    echo "<form class='delete-form' method='POST' action='".deletecom($db)."'>
+                    <input type='hidden' name='cid' value='".$usercid."'>
+                    <button type='submit' class='btn6' name='deletcom'>Delete</button>
+                 </form>";
+                 }
+               }
+
              
               echo "</div>";
            }
@@ -508,17 +533,24 @@ function getSingleThread1($tid) {
             <input type='text' id='getMarkerLocation".$tid."' value='".$row['markerLocation']."'>
             
             </div>
-                <div class='margin2'></div>
-        ";
-
-
-
-
-            
-        
+                <div class='margin2'></div>";
         }  
         }
     }   
 }
 }
+function deleteuser($userid){ //suppose to delete comments but instead kills database...oops
+    if(isset($_POST['yesdelete'])){
+        $db = new SQLite3('../db/databas.db');
+        $deletuser = "DELETE FROM users WHERE uid=:uid";
+        $delstmt = $db->prepare($deletuser);
+        $delstmt->bindParam(':uid', $userid,SQLITE3_TEXT);
+        if($delstmt->execute()){
+            header("location:..\logout.php");
+        }else{
+           echo "unsuccessful";
+        }
+   } 
+}
+
 

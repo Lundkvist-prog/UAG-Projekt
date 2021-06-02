@@ -8,6 +8,7 @@ function setUserSignup() {
     $password = $_POST['password'];
     $passwordMatch = $_POST['passwordMatch'];
     $date = $_POST['date']; 
+    $level = $_POST['level'];
 
     /*salt and hash*/
     $salt = hash('sha3-256', rand());
@@ -36,7 +37,7 @@ function setUserSignup() {
         if($validationbool === false) {
         
         } else { 
-        addUserToDb($username,$email,$passhash,$salt,$date);
+        addUserToDb($username,$email,$passhash,$salt,$date,$level);
         echo "Sign Up Successful!";
         header('location: login.php');
         }
@@ -74,17 +75,18 @@ function checkIfEmailExists($email) {
 
 }
 
-function addUserToDb($username,$email,$passhash,$salt,$date){
+function addUserToDb($username,$email,$passhash,$salt,$date,$level){
 
     $db = new SQLite3('../db/databas.db');
     
-    $sql = "INSERT INTO 'users' ('username','email','password','salt','date') VALUES (:username,:email,:password,:salt,:date)";
+    $sql = "INSERT INTO 'users' ('username','email','password','salt','date','level') VALUES (:username,:email,:password,:salt,:date,:level)";
     $stmt = $db->prepare($sql);
     $stmt->bindParam(':username', $username,SQLITE3_TEXT);
     $stmt->bindParam(':email',$email,SQLITE3_TEXT);
     $stmt->bindParam(':password',$passhash,SQLITE3_TEXT);
     $stmt->bindParam(':salt',$salt,SQLITE3_TEXT);
     $stmt->bindParam(':date',$date,SQLITE3_TEXT);
+    $stmt->bindParam(':level',$level,SQLITE3_TEXT);
     
     
    if($stmt->execute())
@@ -135,6 +137,11 @@ function getUserLogin(){
                     } else {
                         echo "Login Successfull!";
                         $_SESSION['uid'] = $row['uid'];
+                        if($row['level'] == 'admin'){
+                            $_SESSION['admin'] = true;
+                        }else{
+                            $_SESSION['admin'] = false;
+                        }
                         
                         header("Location:../views/homepage.php");
                         exit();

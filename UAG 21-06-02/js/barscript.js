@@ -112,11 +112,11 @@ for (i = 0; i < getMap.length; i++){
     
     
       var marker = document.getElementById("getMarkerLocation".concat(getMap[i])).value;
-        var lat = marker.substring(7,16);
-        var lat = parseFloat(lat).toFixed(6)
-        
-        var lng = marker.substring(18,27);
-        var lng = parseFloat(lng).toFixed(6)
+      var lat = marker.split(",")[0]
+      var lng = marker.split(",")[1]
+
+      lat = lat.split("(")[1]
+      lng = lng.split(")")[0]
       
         
     

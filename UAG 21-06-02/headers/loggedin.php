@@ -13,7 +13,7 @@
                 <div class="dropdown">
                     <a href="" class="conchoice"> Account</a>
                     <div class="dropdown-content">
-                        
+                        <a href="./delete user.php">Delete account</a>
                         <a href="../logout.php">Logout</a>
                     </div>
                 </div>  

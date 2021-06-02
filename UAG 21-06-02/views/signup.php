@@ -61,6 +61,7 @@
                         </div>
 
                         <input type='hidden' name='date' value='".date('Y-m-d H:i:s')."'>
+                        <input type='hidden' name='level' value='user'>
 
                         <button type='submit' name='userSubmit' class='btn3'>Submit</button>
                         <div class='margin'></div>

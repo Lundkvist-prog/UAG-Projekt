@@ -42,9 +42,10 @@ session_start();
             
             ?>
             <?php
-
-            echo "<input type='hidden' id='sessionTid' value='".$_SESSION['tid']."'>";
-            getSingleThread($_SESSION['tid']);
+            if(isset($_SESSION['tid'])){
+                echo "<input type='hidden' id='sessionTid' value='".$_SESSION['tid']."'>";
+                getSingleThread($_SESSION['tid']);
+            }
             ?>
             <br>
             <div class="textfield"  onclick='hideshowcomments()' >
